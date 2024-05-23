@@ -4,13 +4,14 @@
     "slug": "CharmySalesLog",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "mycoolredirect",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
