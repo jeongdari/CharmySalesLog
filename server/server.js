@@ -21,18 +21,6 @@ connection.connect((err) => {
   console.log('Connected to MySQL server');
 });
 
-// Example route to fetch users from the database
-app.get('/api/users', (req, res) => {
-  connection.query('SELECT * FROM users', (err, results) => {
-    if (err) {
-      console.error('Error querying database:', err.stack);
-      res.status(500).send('Error querying database');
-      return;
-    }
-    res.json(results);
-  });
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
