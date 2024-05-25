@@ -16,29 +16,33 @@ export default function RecordSalesScreen() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://10.88.15.151:3000/', {
+      const response = await fetch('http://192.168.0.127:3000/api/sales/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Add token here
         },
         body: JSON.stringify({
-          user_id: 1, // Replace with actual user ID
           date: date.toISOString().split('T')[0],
           card_payment_amt: parseFloat(cardPayment),
           cash_payment_amt: parseFloat(cashPayment),
         }),
       });
-
+  
+      const data = await response.json();
+      console.log('Response status:', response.status);
       if (response.ok) {
         Alert.alert('Success', 'Sales record submitted successfully');
       } else {
-        Alert.alert('Error', 'Failed to submit sales record');
+        console.error('Failed to submit sales record', data);
+        Alert.alert('Error', data.message || 'Failed to submit sales record');
       }
     } catch (error) {
-      console.error(error);
+      console.error('Network request failed', error);
       Alert.alert('Error', 'An error occurred while submitting sales record');
     }
   };
+  
 
   return (
     <View style={styles.container}>

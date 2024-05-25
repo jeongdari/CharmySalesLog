@@ -1,23 +1,33 @@
-// const express = require('express');
-// const { addSale } = require('../controllers/salesController');
-
-// const router = express.Router();
-
-// router.post('/', addSale);
-
-// module.exports = router;
-
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 
-// Route to add a sales record
-router.post('/add', async (req, res) => {
-  const { user_id, date, card_payment, cash_payment } = req.body;
-  const query = 'INSERT INTO sales (user_id, date, card_payment, cash_payment) VALUES (?, ?, ?, ?)';
+// Route to update a sales record
+router.post('/update', async (req, res) => {
+  const { date, card_payment_amt, cash_payment_amt } = req.body;
+  const query = `
+    INSERT INTO Sales (date, card_payment_amt, cash_payment_amt)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      card_payment_amt = VALUES(card_payment_amt),
+      cash_payment_amt = VALUES(cash_payment_amt),
+      updated_at = CURRENT_TIMESTAMP;
+  `;
   try {
-    const [result] = await pool.query(query, [user_id, date, card_payment, cash_payment]);
-    res.status(200).send({ message: 'Sales record added successfully' });
+    await pool.query(query, [date, card_payment_amt, cash_payment_amt]);
+    res.status(200).send({ message: 'Sales record updated successfully' });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Route to delete a sales record
+router.delete('/delete', async (req, res) => {
+  const { date } = req.body;
+  const query = 'DELETE FROM Sales WHERE date = ?';
+  try {
+    await pool.query(query, [date]);
+    res.status(200).send({ message: 'Sales record deleted successfully' });
   } catch (err) {
     res.status(500).send(err);
   }
@@ -25,10 +35,10 @@ router.post('/add', async (req, res) => {
 
 // Route to get sales records
 router.get('/list', async (req, res) => {
-  const { user_id, start_date, end_date } = req.query;
-  const query = 'SELECT * FROM sales WHERE user_id = ? AND date BETWEEN ? AND ?';
+  const { start_date, end_date } = req.query;
+  const query = 'SELECT * FROM Sales WHERE date BETWEEN ? AND ?';
   try {
-    const [results] = await pool.query(query, [user_id, start_date, end_date]);
+    const [results] = await pool.query(query, [start_date, end_date]);
     res.status(200).send(results);
   } catch (err) {
     res.status(500).send(err);
@@ -36,4 +46,3 @@ router.get('/list', async (req, res) => {
 });
 
 module.exports = router;
-
