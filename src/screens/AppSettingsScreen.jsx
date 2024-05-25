@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, Button, TextInput, Linking } from 'react-native';
-import DarkMode from './DarkMode';
+import DarkMode from '../components/DarkMode';
 
 export default function AppSettingsScreen() {
   const { isDarkMode, toggleDarkMode } = DarkMode();

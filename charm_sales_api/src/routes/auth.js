@@ -1,8 +1,5 @@
 const express = require('express');
-const { addSale } = require('../controllers/salesController');
-
 const router = express.Router();
-
-router.post('/', addSale);
+// Add your auth-related routes here
 
 module.exports = router;

@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import HomeStack from "./screens/HomeStack";
-import RecordSalesScreen from "./screens/RecordSalesScreen";
-import ReportsNavigator from "./screens/ReportsNavigator";
-import SettingsNavigator from "./screens/SettingsNavigator";
+import HomeStack from "./src/screens/HomeStack";
+import RecordSalesScreen from "./src/screens/RecordSalesScreen";
+import ReportsNavigator from "./src/screens/ReportsNavigator";
+import SettingsNavigator from "./src/screens/SettingsNavigator";
 import * as SplashScreen from "expo-splash-screen";
 
 const Tab = createBottomTabNavigator();

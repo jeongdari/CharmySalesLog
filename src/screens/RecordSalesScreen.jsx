@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function RecordSalesScreen() {
@@ -14,9 +14,30 @@ export default function RecordSalesScreen() {
     setDate(currentDate);
   };
 
-  const handleSubmit = () => {
-    // Logic to submit the sales record
-    alert(`Submitted: Card - ${cardPayment}, Cash - ${cashPayment} for ${date.toDateString()}`);
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://10.88.15.151:3000/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: 1, // Replace with actual user ID
+          date: date.toISOString().split('T')[0],
+          card_payment_amt: parseFloat(cardPayment),
+          cash_payment_amt: parseFloat(cashPayment),
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Sales record submitted successfully');
+      } else {
+        Alert.alert('Error', 'Failed to submit sales record');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'An error occurred while submitting sales record');
+    }
   };
 
   return (

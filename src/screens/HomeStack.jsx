@@ -11,7 +11,7 @@ function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="MainHome"
+        name="Main"
         component={HomeScreen}
         options={({ navigation }) => ({
           headerRight: () => (
