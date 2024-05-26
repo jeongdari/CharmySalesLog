@@ -25,6 +25,10 @@ export default function HomeScreen({ navigation }) {
         }
         const result = await response.json();
         if (result.data !== null) {
+          // Convert date from UTC to local timezone
+          let utcDate = new Date(result.data.date);
+          let localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+          result.data.date = localDate.toISOString().split('T')[0];
           setSalesData(result.data);
         } else {
           setError(result.message || 'No sales data available.');
@@ -49,7 +53,7 @@ export default function HomeScreen({ navigation }) {
       </View>
     );
   }
-  const formattedDate = salesData && salesData.date ? new Date(salesData.date).toISOString().split('T')[0] : '';
+  const formattedDate = salesData && salesData.date ? salesData.date : '';
 
   return (
     <View style={styles.container}>
@@ -83,6 +87,7 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

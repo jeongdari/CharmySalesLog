@@ -31,8 +31,10 @@ export default function RecordSalesScreen() {
         const data = await response.json();
         if (response.ok) {
           if (data.date) {
-            // Format date to "YYYY-MM-DD"
-            data.date = data.date.split('T')[0];
+            // Convert date from UTC to local timezone
+            let utcDate = new Date(data.date);
+            let localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+            data.date = localDate.toISOString().split('T')[0];
           }
           setSubmittedData(data);
         } else {
@@ -60,14 +62,14 @@ export default function RecordSalesScreen() {
       }
 
       // Check if cardPayment and cashPayment are valid numbers
-    const cardPaymentNumber = parseFloat(cardPayment);
-    const cashPaymentNumber = parseFloat(cashPayment);
-    if (isNaN(cardPaymentNumber) || isNaN(cashPaymentNumber)) {
-      throw new Error('Card payment and cash payment must be valid numbers');
-    }
+      const cardPaymentNumber = parseFloat(cardPayment);
+      const cashPaymentNumber = parseFloat(cashPayment);
+      if (isNaN(cardPaymentNumber) || isNaN(cashPaymentNumber)) {
+        throw new Error('Card payment and cash payment must be valid numbers');
+      }
 
-      // Adjust date to local time zone
-      const localDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+      // Convert date to UTC before storing in the database
+      const utcDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
 
       const response = await fetch(`${config.API_BASE_URL}/sales/update`, {
         method: 'POST',
@@ -76,32 +78,34 @@ export default function RecordSalesScreen() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          date: localDate.toISOString().split('T')[0], // Use local date
+          date: utcDate.toISOString().split('T')[0], // Use UTC date
           card_payment_amt: parseFloat(cardPayment),
           cash_payment_amt: parseFloat(cashPayment),
         }),
       });
 
       const data = await response.json();
-    if (response.ok) {
-      showToast('success', 'Success', 'Sales record submitted successfully');
-      if (data.date) {
-        // Format date to "YYYY-MM-DD"
-        data.date = data.date.split('T')[0];
+      if (response.ok) {
+        showToast('success', 'Success', 'Sales record submitted successfully');
+        if (data.date) {
+          // Convert date from UTC to local timezone
+          let utcDate = new Date(data.date);
+          let localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+          data.date = localDate.toISOString().split('T')[0];
+        }
+        setSubmittedData(data);
+      } else {
+        console.error('Failed to submit sales record', data);
+        showToast('error', 'Error', data.message || 'Failed to submit sales record');
       }
-      setSubmittedData(data);
-    } else {
-      console.error('Failed to submit sales record', data);
-      showToast('error', 'Error', data.message || 'Failed to submit sales record');
+    } catch (error) {
+      if (error.message === 'No token found' || error.message === 'Network request failed') {
+        showToast('error', 'Error', 'An error occurred while submitting sales record');
+      } else {
+        showToast('error', 'Error', error.message || 'An error occurred while submitting sales record');
+      }
     }
-  } catch (error) {
-    if (error.message === 'No token found' || error.message === 'Network request failed') {
-      showToast('error', 'Error', 'An error occurred while submitting sales record');
-    } else {
-      showToast('error', 'Error', error.message || 'An error occurred while submitting sales record');
-    }
-  }
-};
+  };
 
   return (
     <View style={styles.container}>

@@ -4,12 +4,14 @@ const toastStyles = {
   success: {
     backgroundColor: 'green', // Background color for success toast
     color: 'white', // Text color for success toast
-    fontSize: 50, // Font size for success toast
+    fontWeight: 'bold',
+    fontSize: 16, // Font size for success toast
   },
   error: {
     backgroundColor: 'red', // Background color for error toast
     color: 'white', // Text color for error toast
-    fontSize: 50, // Font size for error toast
+    fontWeight: 'bold',
+    fontSize: 16, // Font size for error toast
   },
 };
 
@@ -21,6 +23,6 @@ export const showToast = (type, text1, text2) => {
     type,
     text1,
     text2,
-    options,
+    ...options, // Spread the options object to apply styles directly
   });
 };
