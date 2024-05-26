@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from '../components/config';
 
 export default function RecordSalesScreen() {
   const [date, setDate] = useState(new Date());
@@ -16,7 +18,11 @@ export default function RecordSalesScreen() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://192.168.0.127:3000/api/sales/update', {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+      const response = await fetch(`${config.API_BASE_URL}/sales/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import config from '../components/config';
 
 export default function AuthScreen() {
   const [username, setUsername] = useState('');
@@ -11,10 +12,8 @@ export default function AuthScreen() {
 
   const handleAuth = async () => {
     try {
-      // Log before making the fetch request
-      console.log('Before fetch:', { username, password, isLogin });
-  
-      const response = await fetch(`http://192.168.0.127:3000/api/auth/${isLogin ? 'login' : 'signup'}`, {
+      //console.log('Before fetch:', { username, password, isLogin });
+      const response = await fetch(`${config.API_BASE_URL}/auth/${isLogin ? 'login' : 'signup'}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
