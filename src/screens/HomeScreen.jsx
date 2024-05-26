@@ -1,14 +1,67 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from '../components/config';
 
 export default function HomeScreen({ navigation }) {
+  const [salesData, setSalesData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSalesData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch(`${config.API_BASE_URL}/sales/latest`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          // Format the date to YYYY-MM-DD
+          const formattedDate = new Date(result.date).toISOString().split('T')[0];
+          setSalesData({
+            ...result,
+            date: formattedDate,
+          });
+        } else {
+          console.error(result.message);
+        }
+      } catch (error) {
+        console.error('Error fetching sales data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSalesData();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome to the Sales Logging App</Text>
       <View style={styles.salesSummary}>
-        <Text style={styles.salesText}>Today's Total Sales:</Text>
-        <Text style={styles.salesAmount}>Card: $500</Text>
-        <Text style={styles.salesAmount}>Cash: $300</Text>
+        {salesData ? (
+          <>
+            <Text style={styles.salesText}>Last Updated Sales:</Text>
+            <Text style={styles.salesDetail}>Date: {salesData.date}</Text>
+            <Text style={styles.salesDetail}>Card: ${salesData.card_payment_amt}</Text>
+            <Text style={styles.salesDetail}>Cash: ${salesData.cash_payment_amt}</Text>
+          </>
+        ) : (
+          <Text style={styles.salesText}>No sales data available.</Text>
+        )}
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -23,7 +76,7 @@ export default function HomeScreen({ navigation }) {
         >
           <Text style={styles.buttonText}>View Reports</Text>
         </TouchableOpacity>
-      </View>      
+      </View>
     </View>
   );
 }
@@ -41,6 +94,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 80,
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -70,16 +124,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-    alignItems: 'center',
+    width: '70%',
   },
   salesText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  salesAmount: {
+  salesDetail: {
     fontSize: 16,
     color: '#333',
+    marginLeft: 10,
+    marginBottom: 5,
+    textAlign: 'left',
   },
 });
