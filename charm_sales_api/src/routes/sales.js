@@ -46,17 +46,17 @@ router.get('/list', async (req, res) => {
 });
 
 router.get('/latest', async (req, res) => {
-  const query = 'SELECT CONVERT_TZ(date, "+00:00", "+00:00") AS date, card_payment_amt, cash_payment_amt FROM Sales ORDER BY date DESC LIMIT 1';
+  const query = 'SELECT * FROM Sales ORDER BY date DESC LIMIT 1';
   try {
     const [results] = await pool.query(query);
     if (results.length > 0) {
-      res.status(200).send(results[0]);
+      res.status(200).json({ data: results[0] });
     } else {
-      res.status(404).send({ message: 'No sales record found' });
+      res.status(200).json({ data: null, message: 'No sales record found' });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Server error', error: err });
+    res.status(500).json({ error: 'Server error', details: err });
   }
 });
 

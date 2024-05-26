@@ -6,6 +6,7 @@ import config from '../components/config';
 export default function HomeScreen({ navigation }) {
   const [salesData, setSalesData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -19,19 +20,20 @@ export default function HomeScreen({ navigation }) {
           },
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP status ${response.status}`);
+        }
         const result = await response.json();
-        if (response.ok) {
-          // Format the date to YYYY-MM-DD
-          const formattedDate = new Date(result.date).toISOString().split('T')[0];
-          setSalesData({
-            ...result,
-            date: formattedDate,
-          });
+        if (result.data !== null) {
+          setSalesData(result.data);
         } else {
-          console.error(result.message);
+          setError(result.message || 'No sales data available.');
+          setSalesData(null);
         }
       } catch (error) {
+        setError('Error fetching sales data');
         console.error('Error fetching sales data:', error);
+        setSalesData(null);
       } finally {
         setLoading(false);
       }
@@ -47,6 +49,7 @@ export default function HomeScreen({ navigation }) {
       </View>
     );
   }
+  const formattedDate = salesData && salesData.date ? new Date(salesData.date).toISOString().split('T')[0] : '';
 
   return (
     <View style={styles.container}>
@@ -55,7 +58,7 @@ export default function HomeScreen({ navigation }) {
         {salesData ? (
           <>
             <Text style={styles.salesText}>Last Updated Sales:</Text>
-            <Text style={styles.salesDetail}>Date: {salesData.date}</Text>
+            <Text style={styles.salesDetail}>Date: {formattedDate}</Text>
             <Text style={styles.salesDetail}>Card: ${salesData.card_payment_amt}</Text>
             <Text style={styles.salesDetail}>Cash: ${salesData.cash_payment_amt}</Text>
           </>
