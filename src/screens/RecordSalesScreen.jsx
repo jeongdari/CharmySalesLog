@@ -1,14 +1,50 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../components/config';
+import { showToast } from '../components/Toast';
 
 export default function RecordSalesScreen() {
   const [date, setDate] = useState(new Date());
   const [cardPayment, setCardPayment] = useState('');
   const [cashPayment, setCashPayment] = useState('');
   const [show, setShow] = useState(false);
+  const [submittedData, setSubmittedData] = useState(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found');
+        }
+
+        const response = await fetch(`${config.API_BASE_URL}/sales/latest`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          if (data.date) {
+            // Format date to "YYYY-MM-DD"
+            data.date = data.date.split('T')[0];
+          }
+          setSubmittedData(data);
+        } else {
+          console.error('Failed to fetch sales record', data);
+        }
+      } catch (error) {
+        console.error('Error fetching sales record', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -22,33 +58,50 @@ export default function RecordSalesScreen() {
       if (!token) {
         throw new Error('No token found');
       }
+
+      // Check if cardPayment and cashPayment are valid numbers
+    const cardPaymentNumber = parseFloat(cardPayment);
+    const cashPaymentNumber = parseFloat(cashPayment);
+    if (isNaN(cardPaymentNumber) || isNaN(cashPaymentNumber)) {
+      throw new Error('Card payment and cash payment must be valid numbers');
+    }
+
+      // Adjust date to local time zone
+      const localDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+
       const response = await fetch(`${config.API_BASE_URL}/sales/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Add token here
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          date: date.toISOString().split('T')[0],
+          date: localDate.toISOString().split('T')[0], // Use local date
           card_payment_amt: parseFloat(cardPayment),
           cash_payment_amt: parseFloat(cashPayment),
         }),
       });
-  
+
       const data = await response.json();
-      console.log('Response status:', response.status);
-      if (response.ok) {
-        Alert.alert('Success', 'Sales record submitted successfully');
-      } else {
-        console.error('Failed to submit sales record', data);
-        Alert.alert('Error', data.message || 'Failed to submit sales record');
+    if (response.ok) {
+      showToast('success', 'Success', 'Sales record submitted successfully');
+      if (data.date) {
+        // Format date to "YYYY-MM-DD"
+        data.date = data.date.split('T')[0];
       }
-    } catch (error) {
-      console.error('Network request failed', error);
-      Alert.alert('Error', 'An error occurred while submitting sales record');
+      setSubmittedData(data);
+    } else {
+      console.error('Failed to submit sales record', data);
+      showToast('error', 'Error', data.message || 'Failed to submit sales record');
     }
-  };
-  
+  } catch (error) {
+    if (error.message === 'No token found' || error.message === 'Network request failed') {
+      showToast('error', 'Error', 'An error occurred while submitting sales record');
+    } else {
+      showToast('error', 'Error', error.message || 'An error occurred while submitting sales record');
+    }
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -62,6 +115,7 @@ export default function RecordSalesScreen() {
           mode="date"
           display="default"
           onChange={onChange}
+          maximumDate={new Date()} // Prevent future dates
         />
       )}
       <TextInput
@@ -79,6 +133,16 @@ export default function RecordSalesScreen() {
         onChangeText={setCashPayment}
       />
       <Button title="Submit" onPress={handleSubmit} />
+      {submittedData && (
+        <View style={styles.submittedData}>
+          <Text>Updated Sales Record:</Text>
+          <Text>Date: {submittedData.date || 'N/A'}</Text>
+          <Text>Card Payment: ${submittedData.card_payment_amt}</Text>
+          <Text>Cash Payment: ${submittedData.cash_payment_amt}</Text>
+          <Button title="Edit" onPress={() => console.log('Edit pressed')} />
+          <Button title="Delete" onPress={() => console.log('Delete pressed')} />
+        </View>
+      )}
     </View>
   );
 }
@@ -94,5 +158,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 10,
     paddingLeft: 8,
+  },
+  submittedData: {
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
   },
 });

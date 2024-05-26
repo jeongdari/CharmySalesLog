@@ -15,7 +15,13 @@ router.post('/update', async (req, res) => {
   `;
   try {
     await pool.query(query, [date, card_payment_amt, cash_payment_amt]);
-    res.status(200).send({ message: 'Sales record updated successfully' });
+    
+    // Fetch the updated sales record
+    const selectQuery = 'SELECT * FROM Sales WHERE date = ?';
+    const [rows] = await pool.query(selectQuery, [date]);
+    const updatedRecord = rows[0]; // Assuming only one record is updated
+
+    res.status(200).send(updatedRecord);
   } catch (err) {
     res.status(500).send(err);
   }
