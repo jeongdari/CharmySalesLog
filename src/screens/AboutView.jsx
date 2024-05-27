@@ -8,7 +8,7 @@ const licensesData = [
   // Add more license data as needed
 ];
 
-export default function AboutView({ navigation }) {
+export default function AboutView({ onClose }) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -23,7 +23,7 @@ export default function AboutView({ navigation }) {
             </View>
           ))}
         </ScrollView>
-        <Button title="Close" onPress={() => navigation.goBack()} />
+        <Button title="Close" onPress={onClose} />
       </View>
     </View>
   );

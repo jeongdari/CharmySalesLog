@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import config from '../components/config';
 
 export default function AuthScreen() {
@@ -20,17 +20,18 @@ export default function AuthScreen() {
         },
         body: JSON.stringify({ username, password }),
       });
-  
-      // Log the response status and headers
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-  
+      
       const result = await response.json();
   
       if (response.ok) {
         await AsyncStorage.setItem('token', result.token);
         Alert.alert('Success', isLogin ? 'Login successful' : 'Sign-up successful');
-        navigation.navigate('Home');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Main' }],
+          })
+        );
       } else {
         Alert.alert('Error', result.message);
       }

@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { styles } from "../styles/SettingStyles";
+import { handleLogout } from '../components/handleLogout';
 
 export default function ProfileSettingsScreen() {
+  const navigation = useNavigation();
   const [username] = useState('exampleUser'); // Username cannot be changed
   const [email, setEmail] = useState('example@example.com');
   const [contact, setContact] = useState('1234567890');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-
-  const handleLogout = () => {
-    // Logic to log out
-    Alert.alert("Logged Out", "You have been logged out successfully.");
-  };
 
   const handleProfileUpdate = () => {
     // Logic to update profile
@@ -21,6 +20,10 @@ export default function ProfileSettingsScreen() {
   const handleChangePassword = () => {
     // Logic to change password
     Alert.alert("Password Changed", "Your password has been changed successfully.");
+  };
+
+  const handleLogoutPress = () => {
+    handleLogout(navigation);
   };
 
   return (
@@ -68,38 +71,7 @@ export default function ProfileSettingsScreen() {
 
       <View style={styles.separator} />
 
-      <Button title="Logout" onPress={handleLogout} color="red" />
+      <Button title="Logout" onPress={handleLogoutPress} color="red" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  username: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  separator: {
-    height: 20,
-  },
-});
