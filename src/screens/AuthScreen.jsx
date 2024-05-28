@@ -12,7 +12,6 @@ export default function AuthScreen() {
 
   const handleAuth = async () => {
     try {
-      //console.log('Before fetch:', { username, password, isLogin });
       const response = await fetch(`${config.API_BASE_URL}/auth/${isLogin ? 'login' : 'signup'}`, {
         method: 'POST',
         headers: {
@@ -20,18 +19,17 @@ export default function AuthScreen() {
         },
         body: JSON.stringify({ username, password }),
       });
-      
+
       const result = await response.json();
-  
+
       if (response.ok) {
-        await AsyncStorage.setItem('token', result.token);
-        Alert.alert('Success', isLogin ? 'Login successful' : 'Sign-up successful');
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'Main' }],
-          })
-        );
+        if (result.token) {
+          await AsyncStorage.setItem('token', result.token);
+          Alert.alert('Success', isLogin ? 'Login successful' : 'Sign-up successful');
+          navigation.navigate('Main');
+        } else {
+          Alert.alert('Error', 'No token received from server');
+        }
       } else {
         Alert.alert('Error', result.message);
       }
@@ -61,6 +59,7 @@ export default function AuthScreen() {
       <Button
         title={isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
         onPress={() => setIsLogin(!isLogin)}
+        color="#E67E22"
       />
     </View>
   );
