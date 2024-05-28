@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Platform, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Button, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { StackedBarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts';
+import { G, Line } from 'react-native-svg';
 import config from '../components/config';
 
 export default function DailyReportScreen() {
-  const initialStartDate = new Date();
-  initialStartDate.setDate(initialStartDate.getDate() - 7);
-
-  const [startDate, setStartDate] = useState(initialStartDate);
+  const [startDate, setStartDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async (startDate) => {
-    const formattedStartDate = startDate.toISOString().split('T')[0];
-
+  const fetchRecentData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${config.API_BASE_URL}/reports/generate?start_date=${formattedStartDate}&range=daily`);
+      const response = await fetch(`${config.API_BASE_URL}/reports/recent`);
       const results = await response.json();
 
-      console.log('API Response:', results); 
+      console.log('API Response:', results);
 
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
           date: item.report_date,
-          totalSales: parseFloat(item.total_card_payment) + parseFloat(item.total_cash_payment),
+          cardPayment: parseFloat(item.total_card_payment),
+          cashPayment: parseFloat(item.total_cash_payment),
         }));
         setData(formattedData);
       } else {
@@ -41,40 +39,97 @@ export default function DailyReportScreen() {
     }
   };
 
-  const onStartDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || startDate;
-    setShowStartPicker(Platform.OS === 'ios');
-    setStartDate(currentDate);
-    fetchData(currentDate);  // Fetch data for the new start date
+  const fetchData = async (startDate) => {
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${config.API_BASE_URL}/reports/generate?start_date=${formattedStartDate}&range=daily`);
+      const results = await response.json();
+
+      console.log('API Response:', results);
+
+      if (Array.isArray(results)) {
+        const formattedData = results.map(item => ({
+          date: item.report_date,
+          cardPayment: parseFloat(item.total_card_payment),
+          cashPayment: parseFloat(item.total_cash_payment),
+        }));
+        setData(formattedData);
+      } else {
+        setError('Invalid response format');
+      }
+    } catch (error) {
+      console.error(error);
+      setError('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchData(startDate);  // Fetch initial data for the last 7 days
+    fetchRecentData(); // Fetch the most recent 7 days data on initial load
   }, []);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <Text style={styles.date}>{new Date(item.date).toLocaleDateString()}</Text>
-      <Text style={styles.sales}>Total Sales: ${item.totalSales.toFixed(2)}</Text>
-    </View>
+  const onStartDateChange = (event, selectedDate) => {
+    if (selectedDate) {
+      const currentDate = selectedDate || startDate;
+      setShowStartPicker(false);
+      setStartDate(currentDate);
+      fetchData(currentDate);  // Fetch data for the selected start date
+    } else {
+      setShowStartPicker(false);
+    }
+  };
+
+  const CustomGrid = ({ x, y, ticks }) => (
+    <G>
+      {ticks.map(tick => (
+        <Line
+          key={tick}
+          x1="0%"
+          x2="100%"
+          y1={y(tick)}
+          y2={y(tick)}
+          stroke="rgba(0,0,0,0.2)"
+        />
+      ))}
+      {data.map((_, index) => (
+        <Line
+          key={index}
+          y1="0%"
+          y2="100%"
+          x1={x(index)}
+          x2={x(index)}
+          stroke="rgba(0,0,0,0.2)"
+        />
+      ))}
+    </G>
   );
+
+  const dates = data.map(item => new Date(item.date).getTime());
+  const stackedData = data.map(item => ({
+    card: item.cardPayment,
+    cash: item.cashPayment
+  }));
+
+  const colors = ['#4CAF50', '#FFC107'];
+  const keys = ['card', 'cash'];
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Daily Report</Text>
-      
+
       <View style={styles.datePickerContainer}>
-        <View>
-          <Button onPress={() => setShowStartPicker(true)} title="Select Start Date" />
-          {showStartPicker && (
-            <DateTimePicker
-              value={startDate}
-              mode="date"
-              display="default"
-              onChange={onStartDateChange}
-            />
-          )}
-        </View>
+        <Button onPress={() => setShowStartPicker(true)} title="Select Start Date" />
+        {showStartPicker && (
+          <DateTimePicker
+            value={startDate}
+            mode="date"
+            display="default"
+            onChange={onStartDateChange}
+          />
+        )}
       </View>
 
       {loading && (
@@ -90,11 +145,34 @@ export default function DailyReportScreen() {
       )}
 
       {data.length > 0 && !loading && !error && (
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={item => item.date}
-        />
+        <View style={{ height: 300, flexDirection: 'row' }}>
+          <YAxis
+            data={[...stackedData.map(d => d.card + d.cash)]}
+            contentInset={{ top: 20, bottom: 20 }}
+            svg={{ fontSize: 10, fill: 'grey' }}
+            formatLabel={(value) => `$${value}`}
+          />
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            <StackedBarChart
+              style={{ flex: 1 }}
+              data={stackedData}
+              keys={keys}
+              colors={colors}
+              showGrid={true}
+              contentInset={{ top: 20, bottom: 20 }}
+            >
+              <Grid />
+              <CustomGrid belowChart={true} />
+            </StackedBarChart>
+            <XAxis
+              style={{ marginTop: 10 }}
+              data={dates}
+              formatLabel={(index) => new Date(dates[index]).toLocaleDateString()}
+              contentInset={{ left: 10, right: 10 }}
+              svg={{ fontSize: 10, fill: 'grey' }}
+            />
+          </View>
+        </View>
       )}
     </View>
   );
@@ -127,19 +205,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc'
-  },
-  date: {
-    fontSize: 16
-  },
-  sales: {
-    fontSize: 16,
-    fontWeight: 'bold'
   }
 });
