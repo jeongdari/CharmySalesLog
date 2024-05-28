@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { showToast } from "../components/Toast";
 import { styles } from "../styles/RecordSalesStyles";
 import { fetchLatestSales, updateSalesRecord, deleteSalesRecord } from "../components/RecordSalesUtils";
 
@@ -42,7 +41,7 @@ export default function RecordSalesScreen() {
           mode="date"
           display="default"
           onChange={onChange}
-          maximumDate={new Date()} // Prevent future dates
+          maximumDate={new Date()} 
         />
       )}
       <TextInput
