@@ -19,8 +19,6 @@ export default function DailyReportScreen() {
       const response = await fetch(`${config.API_BASE_URL}/reports/recent`);
       const results = await response.json();
 
-      console.log('API Response:', results);
-
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
           date: item.report_date,
@@ -46,8 +44,6 @@ export default function DailyReportScreen() {
     try {
       const response = await fetch(`${config.API_BASE_URL}/reports/generate?start_date=${formattedStartDate}&range=daily`);
       const results = await response.json();
-
-      console.log('API Response:', results);
 
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
@@ -106,6 +102,14 @@ export default function DailyReportScreen() {
       ))}
     </G>
   );
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear().toString().slice(-2);
+    return `${day}/${month}/${year}`;
+  };
 
   const dates = data.map(item => new Date(item.date).getTime());
   const stackedData = data.map(item => ({
@@ -167,7 +171,7 @@ export default function DailyReportScreen() {
             <XAxis
               style={{ marginTop: 10 }}
               data={dates}
-              formatLabel={(index) => new Date(dates[index]).toLocaleDateString()}
+              formatLabel={(index) => formatDate(dates[index])}
               contentInset={{ left: 10, right: 10 }}
               svg={{ fontSize: 10, fill: 'grey' }}
             />

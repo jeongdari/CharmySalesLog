@@ -4,8 +4,20 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// Utility function to check for empty values
+const isEmpty = (value) => {
+  return value === undefined || value === null || value.trim() === '';
+};
+
+// Sign-up endpoint
 router.post('/signup', async (req, res) => {
   const { username, password, email, phone_number } = req.body;
+
+  // Validate input
+  if (isEmpty(username) || isEmpty(password) || isEmpty(email) || isEmpty(phone_number)) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
   try {
     const [rows] = await pool.query('SELECT * FROM Users WHERE username = ?', [username]);
     if (rows.length > 0) {
@@ -22,8 +34,15 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// Login endpoint
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
+
+  // Validate input
+  if (isEmpty(username) || isEmpty(password)) {
+    return res.status(400).json({ message: 'Username and password are required' });
+  }
+
   try {
     const [rows] = await pool.query('SELECT * FROM Users WHERE username = ?', [username]);
     if (rows.length === 0) {
@@ -41,4 +60,4 @@ router.post('/login', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

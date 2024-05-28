@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import config from '../components/config';
 
 export default function AuthScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const navigation = useNavigation();
 
   const handleAuth = async () => {
     try {
-      const response = await fetch(`${config.API_BASE_URL}/auth/${isLogin ? 'login' : 'signup'}`, {
+      const endpoint = isLogin ? 'login' : 'signup';
+      const body = isLogin
+        ? { username, password }
+        : { username, password, email, phone_number: phoneNumber };
+
+      const response = await fetch(`${config.API_BASE_URL}/auth/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(body),
       });
 
       const result = await response.json();
@@ -55,6 +62,22 @@ export default function AuthScreen() {
         secureTextEntry
         onChangeText={setPassword}
       />
+      {!isLogin && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+        </>
+      )}
       <Button title={isLogin ? 'Login' : 'Sign Up'} onPress={handleAuth} />
       <Button
         title={isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
