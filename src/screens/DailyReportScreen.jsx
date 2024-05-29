@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Platform } from 'react-native';
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { StackedBarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts';
-import { G, Line } from 'react-native-svg';
+import { G, Line, Rect, Text as SVGText } from 'react-native-svg';
+import { useNavigation } from '@react-navigation/native';
 import config from '../components/config';
 
 export default function DailyReportScreen() {
@@ -11,6 +12,7 @@ export default function DailyReportScreen() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigation = useNavigation();
 
   const fetchRecentData = async () => {
     setLoading(true);
@@ -18,6 +20,8 @@ export default function DailyReportScreen() {
     try {
       const response = await fetch(`${config.API_BASE_URL}/reports/recent`);
       const results = await response.json();
+
+      console.log('API Response:', results);
 
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
@@ -44,6 +48,8 @@ export default function DailyReportScreen() {
     try {
       const response = await fetch(`${config.API_BASE_URL}/reports/generate?start_date=${formattedStartDate}&range=daily`);
       const results = await response.json();
+
+      console.log('API Response:', results);
 
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
@@ -114,11 +120,33 @@ export default function DailyReportScreen() {
   const dates = data.map(item => new Date(item.date).getTime());
   const stackedData = data.map(item => ({
     card: item.cardPayment,
-    cash: item.cashPayment
+    cash: item.cashPayment,
+    date: item.date,
   }));
 
   const colors = ['#4CAF50', '#FFC107'];
   const keys = ['card', 'cash'];
+
+  const handleBarPress = (date) => {
+    // Navigate to DetailScreen with the selected date
+    navigation.navigate('DetailScreen', { date });
+  };
+
+  const CustomBar = ({ x, y, width, height, data, index, keys, colors }) => (
+    <G key={`bar-${index}`}>
+      {keys.map((key, idx) => (
+        <Rect
+          key={`bar-${index}-${key}`}
+          x={x(index)}
+          y={y(data[index][key])}
+          width={width}
+          height={height(data[index][key])}
+          fill={colors[idx]}
+          onPress={() => handleBarPress(data[index].date)}
+        />
+      ))}
+    </G>
+  );
 
   return (
     <View style={styles.container}>
@@ -164,16 +192,23 @@ export default function DailyReportScreen() {
               colors={colors}
               showGrid={true}
               contentInset={{ top: 20, bottom: 20 }}
+              renderCustomBar={(props) => <CustomBar {...props} />}
             >
               <Grid />
               <CustomGrid belowChart={true} />
             </StackedBarChart>
             <XAxis
-              style={{ marginTop: 10 }}
+              style={{ marginTop: 10, height: 60 }}  // Increase height for more space
               data={dates}
               formatLabel={(index) => formatDate(dates[index])}
               contentInset={{ left: 10, right: 10 }}
-              svg={{ fontSize: 10, fill: 'grey' }}
+              svg={{
+                fontSize: 10,
+                fill: 'grey',
+                rotation: 90, // Rotate labels for better fit
+                originY: 30,  // Adjust vertical position
+                y: 28,  // Adjust Y position
+              }}
             />
           </View>
         </View>
