@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { styles } from '../styles/AuthStyles';
 import config from '../components/config';
 
 export default function AuthScreen() {
@@ -48,7 +49,11 @@ export default function AuthScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>{isLogin ? 'Login' : 'Sign Up'}</Text>
+      <Image
+        source={require('/Users/danny/Desktop/CharmySalesLog/assets/images/Charmyicon.png')}
+        style={styles.icon}
+      />
+      <Text style={styles.header}>{isLogin ? 'Login' : 'Sign Up'}</Text>
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -78,27 +83,15 @@ export default function AuthScreen() {
           />
         </>
       )}
-      <Button title={isLogin ? 'Login' : 'Sign Up'} onPress={handleAuth} />
-      <Button
-        title={isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
+      <View style={styles.buttonContainer}>
+        <Button title={isLogin ? 'Login' : 'Sign Up'} onPress={handleAuth} />
+      </View>
+      <Text
+        style={styles.toggleButton}
         onPress={() => setIsLogin(!isLogin)}
-        color="#E67E22"
-      />
+      >
+        {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginVertical: 10,
-    paddingLeft: 8,
-  },
-});

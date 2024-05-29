@@ -1,7 +1,7 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import ProfileSettingsScreen from './ProfileSettingsScreen';
-import AppSettingsScreen from './AppSettingsScreen';
+import ProfileSettingsScreen from '../screens/ProfileSettingsScreen';
+import AppSettingsScreen from '../screens/AppSettingsScreen';
 
 const Tab = createMaterialTopTabNavigator();
 

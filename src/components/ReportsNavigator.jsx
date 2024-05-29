@@ -1,8 +1,8 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import DailyReportScreen from './DailyReportScreen';
-import WeeklyReportScreen from './WeeklyReportScreen';
-import MonthlyReportScreen from './MonthlyReportScreen';
+import DailyReportScreen from '../screens/DailyReportScreen';
+import WeeklyReportScreen from '../screens/WeeklyReportScreen';
+import MonthlyReportScreen from '../screens/MonthlyReportScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
