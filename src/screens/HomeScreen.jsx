@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../components/config';
-import { styles } from "../styles/HomeStyles";
 import AboutView from './AboutView';
 import { Ionicons } from "@expo/vector-icons";
 import { SettingsContext } from '../components/SettingsContext';
+import { getStyles } from '../styles/HomeStyles';
 
 export default function HomeScreen({ navigation }) {
   const [salesData, setSalesData] = useState(null);
@@ -13,6 +13,18 @@ export default function HomeScreen({ navigation }) {
   const [error, setError] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
   const { fontSize, isDarkMode } = useContext(SettingsContext);
+
+  const styles = getStyles(isDarkMode);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setShowAbout(true)}>
+          <Ionicons name="information-circle" size={25} color="tomato" style={{ marginRight: 15 }} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -65,20 +77,17 @@ export default function HomeScreen({ navigation }) {
   const formattedDate = salesData && salesData.date ? salesData.date : '';
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#333' : '#fff' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => setShowAbout(true)}>
-          <Ionicons name="information-circle" size={25} color="tomato" style={{ marginRight: 15 }} />
-        </TouchableOpacity>
-      </View>
-      <Text style={[styles.welcomeText, { fontSize: 24, color: isDarkMode ? '#fff' : '#000' }]}>CHARMY BOTTLE SHOP{'\n'}SALES LOGGING APP</Text>
+    <View style={[styles.container]}>
+      <Text style={[styles.welcomeText, { fontSize: 24, color: isDarkMode ? '#fff' : '#000' }]}>
+        CHARMY BOTTLE SHOP{'\n'}SALES LOGGING APP
+      </Text>
       <View style={styles.salesSummary}>
         {salesData ? (
           <>
             <Text style={[styles.salesText, { fontSize, color: isDarkMode ? '#fff' : '#000' }]}>Last Updated Sales:</Text>
-            <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#fff' : '#000' }]}>Date: {formattedDate}</Text>
-            <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#fff' : '#000' }]}>Card: ${salesData.card_payment_amt}</Text>
-            <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#fff' : '#000' }]}>Cash: ${salesData.cash_payment_amt}</Text>
+            <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#CCC' : '#333' }]}>Date: {formattedDate}</Text>
+            <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#CCC' : '#333' }]}>Card: ${salesData.card_payment_amt}</Text>
+            <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#CCC' : '#333' }]}>Cash: ${salesData.cash_payment_amt}</Text>
           </>
         ) : (
           <Text style={[styles.salesText, { fontSize, color: isDarkMode ? '#fff' : '#000' }]}>No sales data available.</Text>

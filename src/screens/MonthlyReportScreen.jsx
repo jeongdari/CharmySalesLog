@@ -1,8 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text } from 'react-native';
+import { SettingsContext } from '../components/SettingsContext';
+import { getStyles } from '../styles/ReportScreen';
 
 export default function MonthlyReportScreen() {
-  // Replace with actual data fetching logic
+  const { fontSize, isDarkMode } = useContext(SettingsContext);
+
+  const styles = getStyles(isDarkMode);
+
   const data = {
     totalCard: 30000,
     totalCash: 15000,
@@ -10,16 +15,9 @@ export default function MonthlyReportScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Monthly Report</Text>
-      <Text>Total Card Payments: ${data.totalCard}</Text>
-      <Text>Total Cash Payments: ${data.totalCash}</Text>
+      <Text style={[styles.header, { fontSize }]}>Monthly Report</Text>
+      <Text style={[styles.text, { fontSize }]}>Total Card Payments: ${data.totalCard}</Text>
+      <Text style={[styles.text, { fontSize }]}>Total Cash Payments: ${data.totalCash}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-});

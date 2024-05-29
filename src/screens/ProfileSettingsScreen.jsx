@@ -1,19 +1,11 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  TouchableWithoutFeedback,
-  ScrollView,
-  Platform,
-} from "react-native";
-import { useNavigation, CommonActions } from "@react-navigation/native";
-import { styles } from "../styles/SettingStyles";
-import { handleLogout } from "../components/handleLogout";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import config from "../components/config"; // Ensure this import is correct
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, TextInput, Button, Alert, TouchableWithoutFeedback, ScrollView, Platform, Keyboard } from 'react-native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import { getStyles } from '../styles/SettingStyles';
+import { handleLogout } from '../components/handleLogout';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from '../components/config'; // Ensure this import is correct
+import { SettingsContext } from '../components/SettingsContext';
 
 const decodeToken = (token) => {
   try {
@@ -42,6 +34,9 @@ export default function ProfileSettingsScreen() {
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [loading, setLoading] = useState(true);
+  const { fontSize, isDarkMode } = useContext(SettingsContext);
+
+  const styles = getStyles(isDarkMode);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -154,31 +149,30 @@ export default function ProfileSettingsScreen() {
   }
 
   return (
-    <TouchableWithoutFeedback
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Profile Settings</Text>
+        <Text style={[styles.header, { fontSize }]}>Profile Settings</Text>
 
-        <Text style={styles.label}>Username:</Text>
-        <Text style={styles.username}>{username}</Text>
+        <Text style={[styles.label, { fontSize }]}>Username:</Text>
+        <Text style={[styles.username, { fontSize }]}>{username}</Text>
 
         <View style={styles.separator} />
 
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          placeholderTextColor={isDarkMode ? '#ccc' : '#888'}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="Contact"
           value={contact}
           onChangeText={setContact}
           keyboardType="phone-pad"
+          placeholderTextColor={isDarkMode ? '#ccc' : '#888'}
         />
         <Button title="Update Profile" onPress={handleProfileUpdate} />
 
@@ -200,6 +194,6 @@ export default function ProfileSettingsScreen() {
           color="black"
         />
       </ScrollView>
-      </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   );
 }

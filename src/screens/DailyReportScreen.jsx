@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, Button, ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { StackedBarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts';
-import { G, Line, Rect, Text as SVGText } from 'react-native-svg';
+import { G, Line, Rect } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import config from '../components/config';
+import { SettingsContext } from '../components/SettingsContext';
+import { getStyles } from '../styles/ReportScreen';
 
 export default function DailyReportScreen() {
   const [startDate, setStartDate] = useState(new Date());
@@ -13,6 +15,9 @@ export default function DailyReportScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
+  const { fontSize, isDarkMode } = useContext(SettingsContext);
+
+  const styles = getStyles(isDarkMode);
 
   const fetchRecentData = async () => {
     setLoading(true);
@@ -20,8 +25,6 @@ export default function DailyReportScreen() {
     try {
       const response = await fetch(`${config.API_BASE_URL}/reports/recent`);
       const results = await response.json();
-
-      console.log('API Response:', results);
 
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
@@ -34,7 +37,6 @@ export default function DailyReportScreen() {
         setError('Invalid response format');
       }
     } catch (error) {
-      console.error(error);
       setError('Failed to fetch data');
     } finally {
       setLoading(false);
@@ -49,8 +51,6 @@ export default function DailyReportScreen() {
       const response = await fetch(`${config.API_BASE_URL}/reports/generate?start_date=${formattedStartDate}&range=daily`);
       const results = await response.json();
 
-      console.log('API Response:', results);
-
       if (Array.isArray(results)) {
         const formattedData = results.map(item => ({
           date: item.report_date,
@@ -62,7 +62,6 @@ export default function DailyReportScreen() {
         setError('Invalid response format');
       }
     } catch (error) {
-      console.error(error);
       setError('Failed to fetch data');
     } finally {
       setLoading(false);
@@ -93,7 +92,7 @@ export default function DailyReportScreen() {
           x2="100%"
           y1={y(tick)}
           y2={y(tick)}
-          stroke="rgba(0,0,0,0.2)"
+          stroke="rgba(255,255,255,0.2)"
         />
       ))}
       {data.map((_, index) => (
@@ -103,7 +102,7 @@ export default function DailyReportScreen() {
           y2="100%"
           x1={x(index)}
           x2={x(index)}
-          stroke="rgba(0,0,0,0.2)"
+          stroke="rgba(255,255,255,0.2)"
         />
       ))}
     </G>
@@ -128,7 +127,6 @@ export default function DailyReportScreen() {
   const keys = ['card', 'cash'];
 
   const handleBarPress = (date) => {
-    // Navigate to DetailScreen with the selected date
     navigation.navigate('DetailScreen', { date });
   };
 
@@ -150,7 +148,7 @@ export default function DailyReportScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Daily Report</Text>
+      <Text style={[styles.header, { fontSize }]}>Daily Report</Text>
 
       <View style={styles.datePickerContainer}>
         <Button onPress={() => setShowStartPicker(true)} title="Select Start Date" />
@@ -166,13 +164,14 @@ export default function DailyReportScreen() {
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <Text>Loading...</Text>
+          <ActivityIndicator size="large" color={isDarkMode ? "#fff" : "#000"} />
+          <Text style={[styles.text, { fontSize }]}>Loading...</Text>
         </View>
       )}
 
       {error && (
         <View style={styles.errorContainer}>
-          <Text>{error}</Text>
+          <Text style={[styles.text, { fontSize }]}>{error}</Text>
         </View>
       )}
 
@@ -181,7 +180,7 @@ export default function DailyReportScreen() {
           <YAxis
             data={[...stackedData.map(d => d.card + d.cash)]}
             contentInset={{ top: 20, bottom: 20 }}
-            svg={{ fontSize: 10, fill: 'grey' }}
+            svg={{ fontSize: 10, fill: isDarkMode ? '#fff' : 'grey' }}
             formatLabel={(value) => `$${value}`}
           />
           <View style={{ flex: 1, marginLeft: 10 }}>
@@ -204,7 +203,7 @@ export default function DailyReportScreen() {
               contentInset={{ left: 10, right: 10 }}
               svg={{
                 fontSize: 10,
-                fill: 'grey',
+                fill: isDarkMode ? '#fff' : 'grey',
                 rotation: 90, // Rotate labels for better fit
                 originY: 30,  // Adjust vertical position
                 y: 28,  // Adjust Y position
@@ -216,33 +215,3 @@ export default function DailyReportScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff'
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center'
-  },
-  datePickerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-});

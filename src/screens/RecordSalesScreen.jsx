@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { styles } from "../styles/RecordSalesStyles";
-import { fetchLatestSales, updateSalesRecord, deleteSalesRecord } from "../components/RecordSalesUtils";
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, TextInput, Button, TouchableOpacity } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { getStyles } from '../styles/RecordSalesStyles';
+import { fetchLatestSales, updateSalesRecord, deleteSalesRecord } from '../components/RecordSalesUtils';
+import { SettingsContext } from '../components/SettingsContext';
 
 export default function RecordSalesScreen() {
   const [date, setDate] = useState(new Date());
@@ -10,6 +11,9 @@ export default function RecordSalesScreen() {
   const [cashPayment, setCashPayment] = useState("");
   const [show, setShow] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
+  const { fontSize, isDarkMode } = useContext(SettingsContext);
+
+  const styles = getStyles(isDarkMode);
 
   useEffect(() => {
     fetchLatestSales(setSubmittedData);
@@ -31,7 +35,7 @@ export default function RecordSalesScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Select Date:</Text>
+      <Text style={[styles.text, { fontSize }]}>Select Date:</Text>
       <View>
         <Button onPress={() => setShow(true)} title="Show date picker!" />
       </View>
@@ -45,15 +49,17 @@ export default function RecordSalesScreen() {
         />
       )}
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Card Payment"
+        placeholderTextColor={isDarkMode ? '#ccc' : '#888'}
         keyboardType="numeric"
         value={cardPayment}
         onChangeText={setCardPayment}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Cash Payment"
+        placeholderTextColor={isDarkMode ? '#ccc' : '#888'}
         keyboardType="numeric"
         value={cashPayment}
         onChangeText={setCashPayment}
@@ -61,20 +67,15 @@ export default function RecordSalesScreen() {
       <Button title="Submit" onPress={handleSubmit} />
       {submittedData && (
         <View style={styles.submittedData}>
-          <Text>Updated Sales Record:</Text>
-          <Text>Date: {submittedData.date || "N/A"}</Text>
-          <Text>Card Payment: ${submittedData.card_payment_amt}</Text>
-          <Text>Cash Payment: ${submittedData.cash_payment_amt}</Text>
-          <View style={styles.deleteButtonWrapper}>
-            <Button
-              title="Delete"
-              onPress={handleDelete}
-              color="#ff0000"
-            />
-          </View>
+          <Text style={[styles.text, { fontSize }]}>Updated Sales Record:</Text>
+          <Text style={[styles.text, { fontSize }]}>Date: {submittedData.date || "N/A"}</Text>
+          <Text style={[styles.text, { fontSize }]}>Card Payment: ${submittedData.card_payment_amt}</Text>
+          <Text style={[styles.text, { fontSize }]}>Cash Payment: ${submittedData.cash_payment_amt}</Text>
+          <TouchableOpacity style={styles.deleteButtonWrapper} onPress={handleDelete}>
+            <Text style={styles.deleteButtonText}>Delete</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
   );
 }
-
