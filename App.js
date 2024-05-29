@@ -11,6 +11,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 import Toast from "react-native-toast-message";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs ([
+  'Warning: Grid: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.'
+]);
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
