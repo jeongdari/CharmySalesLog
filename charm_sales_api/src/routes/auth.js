@@ -29,7 +29,6 @@ router.post('/signup', async (req, res) => {
     const [newUser] = await pool.query('SELECT * FROM Users WHERE username = ?', [username]);
     const user = newUser[0];
     const token = jwt.sign({ user_id: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    console.log(`Generated token for signup: ${token}`); // Log the token
     res.status(201).json({ message: 'User created successfully', token });
   } catch (error) {
     console.error('Signup error:', error);
@@ -57,7 +56,6 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Incorrect password' });
     }
     const token = jwt.sign({ user_id: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    console.log(`Generated token for login: ${token}`); // Log the token
     res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     console.error('Login error:', error);

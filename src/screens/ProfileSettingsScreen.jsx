@@ -47,14 +47,12 @@ export default function ProfileSettingsScreen() {
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
-          console.log("No token found, redirecting to Auth screen");
           navigation.navigate("Auth"); // Redirect to login if no token
           return;
         }
 
         const decoded = decodeToken(token);
         if (!decoded) {
-          console.log("Token is invalid, redirecting to Auth screen");
           navigation.navigate("Auth"); // Redirect to login if token is invalid
           return;
         }

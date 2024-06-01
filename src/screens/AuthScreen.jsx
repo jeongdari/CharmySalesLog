@@ -29,7 +29,6 @@ export default function AuthScreen() {
       });
 
       const result = await response.json();
-      console.log(`Token received from server: ${result.token}`); // Log the token
 
       if (response.ok) {
         if (result.token) {
