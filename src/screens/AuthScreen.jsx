@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, TextInput, Button, Alert, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { styles } from '../styles/AuthStyles';
 import config from '../components/config';
+import { styles } from '../styles/AuthStyles';
 
 export default function AuthScreen() {
   const [username, setUsername] = useState('');
@@ -29,6 +29,7 @@ export default function AuthScreen() {
       });
 
       const result = await response.json();
+      console.log(`Token received from server: ${result.token}`); // Log the token
 
       if (response.ok) {
         if (result.token) {

@@ -4,25 +4,29 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import { getStyles } from '../styles/SettingStyles';
 import { handleLogout } from '../components/handleLogout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from '../components/config'; // Ensure this import is correct
+import config from '../components/config';
 import { SettingsContext } from '../components/SettingsContext';
 
 const decodeToken = (token) => {
   try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    
+    // Add padding
+    while (base64.length % 4) {
+      base64 += '=';
+    }
+
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
     );
 
     return JSON.parse(jsonPayload);
   } catch (e) {
-    console.error("Error decoding token:", e);
+    console.error('Error decoding token:', e);
     return null;
   }
 };

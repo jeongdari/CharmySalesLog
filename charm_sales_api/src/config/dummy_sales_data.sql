@@ -1,16 +1,5 @@
 USE saleslog;
 
-DROP TABLE IF EXISTS Sales;
-CREATE TABLE Sales (
-    sale_id INT AUTO_INCREMENT PRIMARY KEY,
-    date DATE NOT NULL,
-    card_payment_amt DECIMAL(10, 2) NOT NULL,
-    cash_payment_amt DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_sales_date (date)
-);
-
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2021-05-01 00:00:00', 6853.89, 2687.02);
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2021-05-02 00:00:00', 7294.65, 1287.38);
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2021-05-03 00:00:00', 2387.97, 916.91);
@@ -1107,3 +1096,7 @@ INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-27
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-28 00:00:00', 6835.55, 1762.51);
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-29 00:00:00', 3157.79, 697.03);
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-30 00:00:00', 2866.98, 577.13);
+
+-- Populate the aggregated tables
+CALL PopulateWeeklyAggregatedSales();
+CALL PopulateMonthlyAggregatedSales();

@@ -13,6 +13,7 @@ import * as SplashScreen from "expo-splash-screen";
 import Toast from "react-native-toast-message";
 import { LogBox } from 'react-native';
 import { SettingsProvider, SettingsContext } from './src/components/SettingsContext';
+import config from './src/components/config'; 
 
 LogBox.ignoreLogs([
   'Warning: Grid: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.'
@@ -64,19 +65,43 @@ export default function App() {
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
 
-    const clearTokenOnReload = async () => {
-      await AsyncStorage.removeItem('token');
+    const validateToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found');
+        }
+        const response = await fetch(`${config.API_BASE_URL}/auth/validate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          // Token is valid
+          console.log('Token is valid');
+          setIsAuthenticated(true);
+        } else {
+          // Token is invalid, redirect to Auth screen
+          await AsyncStorage.removeItem('token');
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        await AsyncStorage.removeItem('token');
+        setIsAuthenticated(false);
+      } finally {
+        SplashScreen.hideAsync();
+      }
     };
 
     const checkAuth = async () => {
-      const token = await AsyncStorage.getItem('token');
-      if (token) {
-        setIsAuthenticated(true);
-      }
-      SplashScreen.hideAsync();
+      await validateToken();
     };
 
-    clearTokenOnReload().then(checkAuth);
+    checkAuth();
   }, []);
 
   return (

@@ -5,9 +5,9 @@ export const handleLogout = async (navigation) => {
   try {
     await AsyncStorage.removeItem('token');
     navigation.reset({
-        index: 0,
-        routes: [{ name: 'Auth' }],
-      });
+      index: 0,
+      routes: [{ name: 'Auth' }],
+    });
     Alert.alert("Logged Out", "You have been logged out successfully.");
   } catch (error) {
     console.error('Error logging out:', error);
