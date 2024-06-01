@@ -9,7 +9,7 @@ export const getStyles = (isDarkMode) => StyleSheet.create({
   header: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: 'center',
     color: isDarkMode ? '#fff' : '#000',
   },
@@ -17,7 +17,7 @@ export const getStyles = (isDarkMode) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 0,
   },
   loadingContainer: {
     flex: 1,

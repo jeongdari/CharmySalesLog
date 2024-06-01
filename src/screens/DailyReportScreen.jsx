@@ -6,6 +6,7 @@ import { SettingsContext } from '../components/SettingsContext';
 import { getStyles } from '../styles/ReportScreen';
 import DatePickerComponent from '../components/DatePickerComponent';
 import BarChartComponent from '../components/BarChartComponent';
+import SalesTable from '../components/SalesTable';
 
 export default function DailyReportScreen() {
   const [startDate, setStartDate] = useState(new Date());
@@ -86,8 +87,6 @@ export default function DailyReportScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.header, { fontSize }]}>Daily Report</Text>
-
       <DatePickerComponent
         startDate={startDate}
         showStartPicker={showStartPicker}
@@ -109,7 +108,10 @@ export default function DailyReportScreen() {
       )}
 
       {data.length > 0 && !loading && !error && (
+        <>
         <BarChartComponent data={data} isDarkMode={isDarkMode} fontSize={fontSize} navigation={navigation} />
+        <SalesTable data={data} fontSize={fontSize} isDarkMode={isDarkMode} /> 
+        </>
       )}
     </View>
   );

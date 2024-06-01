@@ -92,6 +92,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#CCC' : '#333' }]}>Date: {formattedDate}</Text>
             <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#CCC' : '#333' }]}>Card: ${salesData.card_payment_amt}</Text>
             <Text style={[styles.salesDetail, { fontSize, color: isDarkMode ? '#CCC' : '#333' }]}>Cash: ${salesData.cash_payment_amt}</Text>
+            <Text style={[styles.salesDetail, { fontSize: fontSize + 3, color: isDarkMode ? '#CCC' : '#333' , fontWeight: 'bold', marginTop: 10 }]}>Total: ${salesData.total_sales}</Text>
           </>
         ) : (
           <Text style={[styles.salesText, { fontSize, color: isDarkMode ? '#fff' : '#000' }]}>No sales data available.</Text>
