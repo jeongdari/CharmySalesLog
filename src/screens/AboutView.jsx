@@ -1,20 +1,44 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
-
-const licensesData = [
-  { name: 'React', license: 'MIT License' },
-  { name: 'React Native', license: 'MIT License' },
-  { name: 'Redux', license: 'MIT License' },
-  // Add more license data as needed
-];
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import config from '../components/config';
 
 export default function AboutView({ onClose }) {
+  const [licensesData, setLicensesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchLicenses = async () => {
+      try {
+        const response = await fetch(`${config.API_BASE_URL}/crawler/licenses`);
+        if (!response.ok) {
+          throw new Error(`HTTP status ${response.status}`);
+        }
+        const result = await response.json();
+        console.log('Licenses fetched successfully:', result); // Debugging log
+        setLicensesData(Object.entries(result).map(([name, licenseData]) => ({
+          name,
+          license: licenseData.licenses,
+        })));
+      } catch (error) {
+        setError('Failed to fetch license data');
+        console.error('Error fetching license data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLicenses();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>About Charmy Bottle Shop</Text>
         <Text>This app is a simple accounting application to log daily sales amount of Charmy Bottle Shop.</Text>
         <Text style={styles.subtitle}>Open-Source Licenses:</Text>
+        {loading && <ActivityIndicator size="large" color="#0000ff" />}
+        {error && <Text style={styles.error}>{error}</Text>}
         <ScrollView style={styles.licenseList}>
           {licensesData.map((license, index) => (
             <View key={index} style={styles.licenseItem}>
@@ -61,5 +85,10 @@ const styles = StyleSheet.create({
   },
   licenseName: {
     fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    fontWeight: 'bold',
+    marginTop: 10,
   },
 });

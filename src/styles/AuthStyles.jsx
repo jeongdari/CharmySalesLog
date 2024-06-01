@@ -11,7 +11,8 @@ export const styles = StyleSheet.create({
   icon: {
     width: 200,
     height: 200,
-    marginBottom: -50,
+    marginTop: -30,
+    marginBottom: -30,
   },
   header: {
     fontSize: 26,

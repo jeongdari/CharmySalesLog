@@ -34,7 +34,7 @@ const SalesTable = ({ data, fontSize, isDarkMode }) => {
 
 const getStyles = (isDarkMode) => StyleSheet.create({
   tableContainer: {
-    marginTop: 5,
+    marginTop: 10,
     borderWidth: 1,
     borderColor: isDarkMode ? '#fff' : '#000',
     borderRadius: 5,

@@ -1,0 +1,18 @@
+{
+    "@segment/loosely-validate-event@2.0.0": {
+        "licenses": "UNKNOWN",
+        "parents": "charmysaleslog"
+    },
+    "normalize-package-data@1.0.3": {
+        "licenses": "MIT*",
+        "repository": "https://github.com/meryn/normalize-package-data",
+        "licenseUrl": "https://github.com/meryn/normalize-package-data/raw/master/LICENSE",
+        "parents": "charmysaleslog"
+    },
+    "valid-url@1.0.9": {
+        "licenses": "UNKNOWN",
+        "repository": "https://github.com/ogt/valid-url",
+        "licenseUrl": "https://github.com/ogt/valid-url/raw/master/LICENSE",
+        "parents": "charmysaleslog"
+    }
+}
