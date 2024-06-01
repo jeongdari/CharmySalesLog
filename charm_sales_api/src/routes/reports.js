@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const pool = require('../config/db');
 
 // Helper function to add days to a date
 const addDays = (date, days) => {
@@ -41,10 +41,11 @@ router.get('/generate', async (req, res) => {
   const format = range === 'daily' ? '%Y-%m-%d' : range === 'weekly' ? '%Y-%u' : '%Y-%m';
 
   try {
-    const [results] = await db.query(query, [format, formattedStartDate, formattedEndDate]);
-    res.status(200).send(results);
+    const [results] = await pool.query(query, [format, formattedStartDate, formattedEndDate]);
+    res.status(200).json(results);
   } catch (err) {
-    res.status(500).send(err);
+    console.error('Error generating report:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -69,12 +70,24 @@ router.get('/recent', async (req, res) => {
   `;
 
   try {
-    const [results] = await db.query(query);
-    res.status(200).json(results); // Ensure JSON response
+    const [results] = await pool.query(query);
+    res.status(200).json(results);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' }); // Ensure JSON response on error
+    console.error('Error fetching recent sales data:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+router.get('/weekly-sales', async (req, res) => {
+  try {
+    const query = 'SELECT week_year, total_sales, average_daily_sales FROM WeeklyAggregatedSales ORDER BY week_year ASC';
+    const [results] = await pool.query(query);
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching weekly sales data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;
