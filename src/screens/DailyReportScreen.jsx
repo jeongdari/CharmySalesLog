@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Button, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { View, Text, ActivityIndicator } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import config from '../components/config';
 import { SettingsContext } from '../components/SettingsContext';
 import { getStyles } from '../styles/ReportScreen';
@@ -67,9 +67,11 @@ export default function DailyReportScreen() {
     }
   };
 
-  useEffect(() => {
-    fetchRecentData(); // Fetch the most recent 7 days data on initial load
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchRecentData(); // Fetch the most recent 7 days data on screen focus
+    }, [])
+  );
 
   const onStartDateChange = (event, selectedDate) => {
     if (selectedDate) {

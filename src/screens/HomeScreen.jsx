@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../components/config';
@@ -6,6 +6,7 @@ import AboutView from './AboutView';
 import { Ionicons } from "@expo/vector-icons";
 import { SettingsContext } from '../components/SettingsContext';
 import { getStyles } from '../styles/HomeStyles';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function HomeScreen({ navigation }) {
   const [salesData, setSalesData] = useState(null);
@@ -26,43 +27,46 @@ export default function HomeScreen({ navigation }) {
     });
   }, [navigation]);
 
-  useEffect(() => {
-    const fetchSalesData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await fetch(`${config.API_BASE_URL}/sales/latest`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+  const fetchSalesData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await fetch(`${config.API_BASE_URL}/sales/latest`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error(`HTTP status ${response.status}`);
-        }
-        const result = await response.json();
-        if (result.data !== null) {
-          // Convert date from UTC to local timezone
-          let utcDate = new Date(result.data.date);
-          let localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
-          result.data.date = localDate.toISOString().split('T')[0];
-          setSalesData(result.data);
-        } else {
-          setError(result.message || 'No sales data available.');
-          setSalesData(null);
-        }
-      } catch (error) {
-        setError('Error fetching sales data');
-        console.error('Error fetching sales data:', error);
-        setSalesData(null);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP status ${response.status}`);
       }
-    };
-
-    fetchSalesData();
+      const result = await response.json();
+      if (result.data !== null) {
+        // Convert date from UTC to local timezone
+        let utcDate = new Date(result.data.date);
+        let localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+        result.data.date = localDate.toISOString().split('T')[0];
+        setSalesData(result.data);
+      } else {
+        setError(result.message || 'No sales data available.');
+        setSalesData(null);
+      }
+    } catch (error) {
+      setError('Error fetching sales data');
+      console.error('Error fetching sales data:', error);
+      setSalesData(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchSalesData();
+    }, [fetchSalesData])
+  );
 
   if (loading) {
     return (
