@@ -31,6 +31,16 @@ const decodeToken = (token) => {
   }
 };
 
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validatePhoneNumber = (phoneNumber) => {
+  const phoneRegex = /^[0-9]+$/;
+  return phoneRegex.test(phoneNumber);
+};
+
 export default function ProfileSettingsScreen() {
   const navigation = useNavigation();
   const [userId, setUserId] = useState(null);
@@ -85,6 +95,16 @@ export default function ProfileSettingsScreen() {
   const handleProfileUpdate = async () => {
     if (!userId) {
       Alert.alert("Error", "User ID not found");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Invalid email format");
+      return;
+    }
+
+    if (!validatePhoneNumber(contact)) {
+      Alert.alert("Error", "Phone number must contain only digits");
       return;
     }
 

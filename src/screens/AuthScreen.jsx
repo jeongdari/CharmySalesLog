@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, Image } from 'react-native';
+import { View, Text, TextInput, Button, Alert, Image, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import config from '../components/config';
@@ -13,7 +13,26 @@ export default function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true);
   const navigation = useNavigation();
 
+  const handlePhoneNumberChange = (text) => {
+    // Allow only numeric input
+    setPhoneNumber(text.replace(/[^0-9]/g, ''));
+  };
+
+  const handleEmailChange = (text) => {
+    setEmail(text);
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleAuth = async () => {
+    if (!isLogin && !validateEmail(email)) {
+      Alert.alert('Error', 'Invalid email format');
+      return;
+    }
+
     try {
       const endpoint = isLogin ? 'login' : 'signup';
       const body = isLogin
@@ -73,13 +92,15 @@ export default function AuthScreen() {
             style={styles.input}
             placeholder="Email"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={handleEmailChange}
+            keyboardType="email-address"
           />
           <TextInput
             style={styles.input}
             placeholder="Phone Number"
             value={phoneNumber}
-            onChangeText={setPhoneNumber}
+            onChangeText={handlePhoneNumberChange}
+            keyboardType="numeric"
           />
         </>
       )}

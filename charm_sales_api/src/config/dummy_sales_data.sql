@@ -1096,6 +1096,19 @@ INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-27
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-28 00:00:00', 6835.55, 1762.51);
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-29 00:00:00', 3157.79, 697.03);
 INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-04-30 00:00:00', 2866.98, 577.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-01 00:00:00', 2936.27, 495.15);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-02 00:00:00', 2866.98, 577.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-03 00:00:00', 3161.98, 366.54);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-04 00:00:00', 8175.98, 638.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-05 00:00:00', 6216.98, 547.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-06 00:00:00', 7707.98, 813.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-07 00:00:00', 3327.98, 355.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-08 00:00:00', 1887.98, 254.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-09 00:00:00', 3041.98, 409.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-10 00:00:00', 3362.98, 509.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-11 00:00:00', 8407.98, 707.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-12 00:00:00', 4651.98, 364.13);
+INSERT INTO Sales (date, card_payment_amt, cash_payment_amt) VALUES ('2024-05-13 00:00:00', 1789.98, 227.50);
 
 -- Populate the aggregated tables
 CALL PopulateWeeklyAggregatedSales();

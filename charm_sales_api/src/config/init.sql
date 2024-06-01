@@ -20,6 +20,7 @@ CREATE TABLE Sales (
     date DATE NOT NULL,
     card_payment_amt DECIMAL(10, 2) NOT NULL,
     cash_payment_amt DECIMAL(10, 2) NOT NULL,
+    total_sales DECIMAL(10, 2) GENERATED ALWAYS AS (card_payment_amt + cash_payment_amt) STORED,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_sales_date (date) -- Ensure only one sales record per day
@@ -51,8 +52,8 @@ BEGIN
     INSERT INTO WeeklyAggregatedSales (week_year, total_sales, average_daily_sales)
     SELECT 
         YEAR(date) * 100 + WEEK(date, 3) AS week_year,
-        SUM(card_payment_amt + cash_payment_amt) AS total_sales,
-        SUM(card_payment_amt + cash_payment_amt) / COUNT(DISTINCT DATE(date)) AS average_daily_sales
+        SUM(total_sales) AS total_sales,
+        SUM(total_sales) / COUNT(DISTINCT DATE(date)) AS average_daily_sales
     FROM Sales
     GROUP BY week_year;
 END //
@@ -69,8 +70,8 @@ BEGIN
     INSERT INTO MonthlyAggregatedSales (month_year, total_sales, average_daily_sales)
     SELECT 
         DATE_FORMAT(date, '%Y-%m') AS month_year,
-        SUM(card_payment_amt + cash_payment_amt) AS total_sales,
-        SUM(card_payment_amt + cash_payment_amt) / COUNT(DISTINCT DATE(date)) AS average_daily_sales
+        SUM(total_sales) AS total_sales,
+        SUM(total_sales) / COUNT(DISTINCT DATE(date)) AS average_daily_sales
     FROM Sales
     GROUP BY month_year;
 END //

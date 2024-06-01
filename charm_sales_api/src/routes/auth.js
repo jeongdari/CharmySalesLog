@@ -10,6 +10,18 @@ const isEmpty = (value) => {
   return value === undefined || value === null || value.trim() === '';
 };
 
+// Utility function to validate phone numbers
+const isValidPhoneNumber = (phone) => {
+  const phoneRegex = /^[0-9]+$/;
+  return phoneRegex.test(phone);
+};
+
+// Utility function to validate emails
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 // Sign-up endpoint
 router.post('/signup', async (req, res) => {
   const { username, password, email, phone_number } = req.body;
@@ -17,6 +29,16 @@ router.post('/signup', async (req, res) => {
   // Validate input
   if (isEmpty(username) || isEmpty(password) || isEmpty(email) || isEmpty(phone_number)) {
     return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  // Validate phone number
+  if (!isValidPhoneNumber(phone_number)) {
+    return res.status(400).json({ message: 'Phone number must contain only digits' });
+  }
+
+  // Validate email
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
   }
 
   try {
