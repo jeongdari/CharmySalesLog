@@ -25,8 +25,12 @@ export default function RecordSalesScreen() {
     setDate(currentDate);
   };
 
-  const handleSubmit = () => {
-    updateSalesRecord(date, cardPayment, cashPayment, setSubmittedData);
+  const handleSubmit = async () => {
+    const success = await updateSalesRecord(date, cardPayment, cashPayment, setSubmittedData);
+    if (success) {
+      setCardPayment("");
+      setCashPayment("");
+    }
   };
 
   const handleDelete = () => {
