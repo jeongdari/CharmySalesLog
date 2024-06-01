@@ -63,6 +63,11 @@ export default function App() {
 
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
+
+    const clearTokenOnReload = async () => {
+      await AsyncStorage.removeItem('token');
+    };
+
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem('token');
       if (token) {
@@ -71,7 +76,7 @@ export default function App() {
       SplashScreen.hideAsync();
     };
 
-    checkAuth();
+    clearTokenOnReload().then(checkAuth);
   }, []);
 
   return (
