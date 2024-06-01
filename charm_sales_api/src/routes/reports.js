@@ -89,5 +89,23 @@ router.get('/weekly-sales', async (req, res) => {
   }
 });
 
+router.get('/monthly-sales', async (req, res) => {
+  try {
+    const query = `
+      SELECT month_year, total_sales, average_daily_sales 
+      FROM MonthlyAggregatedSales 
+      WHERE month_year < DATE_FORMAT(NOW(), '%Y-%m')
+      ORDER BY month_year DESC 
+      LIMIT 12
+    `;
+    const [results] = await pool.query(query);
+    res.status(200).json(results.reverse()); // Reverse to show the oldest month first
+  } catch (error) {
+    console.error('Error fetching monthly sales data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 module.exports = router;
