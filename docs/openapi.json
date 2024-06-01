@@ -1,0 +1,1011 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Charmy Bottle Shop API",
+    "version": "1.0.0",
+    "description": "API documentation for Charmy Bottle Shop"
+  },
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "summary": "User Signup",
+        "description": "Endpoint for user registration",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "1234567890"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password",
+                  "email",
+                  "phone_number"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User created successfully"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "your_jwt_token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "All fields are required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Server error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "User Login",
+        "description": "Endpoint for user login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "your_jwt_token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Username and password are required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Server error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile/{user_id}": {
+      "get": {
+        "summary": "Fetch User Profile",
+        "description": "Fetch user profile information by user ID",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the user to fetch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "example": "johndoe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "johndoe@example.com"
+                    },
+                    "phone_number": {
+                      "type": "string",
+                      "example": "1234567890"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error fetching user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Error fetching user profile"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile/update": {
+      "put": {
+        "summary": "Update User Profile",
+        "description": "Update user profile information",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "1234567890"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "email",
+                  "phone_number"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Profile updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error updating profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Error updating profile"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile/delete": {
+      "delete": {
+        "summary": "Delete User Account",
+        "description": "Delete user account by user ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": [
+                  "user_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Account deleted successfully"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "User not found"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error deleting account",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Error deleting account"
+                      },
+                      "error": {
+                        "type": "string",
+                        "example": "Detailed error message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/update": {
+      "post": {
+        "summary": "Update a sales record",
+        "description": "Update or insert a sales record. If the record exists, it will be updated.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-01-01"
+                  },
+                  "card_payment_amt": {
+                    "type": "number",
+                    "example": 100.00
+                  },
+                  "cash_payment_amt": {
+                    "type": "number",
+                    "example": 50.00
+                  }
+                },
+                "required": [
+                  "date",
+                  "card_payment_amt",
+                  "cash_payment_amt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sales record updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sale_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "example": "2024-01-01"
+                    },
+                    "card_payment_amt": {
+                      "type": "number",
+                      "example": 100.00
+                    },
+                    "cash_payment_amt": {
+                      "type": "number",
+                      "example": 50.00
+                    },
+                    "total_sales": {
+                      "type": "number",
+                      "example": 150.00
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-01T12:00:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/delete": {
+      "delete": {
+        "summary": "Delete a sales record",
+        "description": "Delete a sales record by date.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-01-01"
+                  }
+                },
+                "required": [
+                  "date"
+                ]
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Sales record deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Sales record deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Detailed error message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/list": {
+      "get": {
+        "summary": "Get sales records",
+        "description": "Retrieve sales records between the specified start and end dates.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-01-01"
+            },
+            "description": "Start date for the sales records"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-01-07"
+            },
+            "description": "End date for the sales records"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sales records retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sale_id": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                      },
+                      "card_payment_amt": {
+                        "type": "number",
+                        "example": 100.00
+                      },
+                      "cash_payment_amt": {
+                        "type": "number",
+                        "example": 50.00
+                      },
+                      "total_sales": {
+                        "type": "number",
+                        "example": 150.00
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                      },
+                      "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Detailed error message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/latest": {
+      "get": {
+        "summary": "Get latest sales record",
+        "description": "Retrieve the most recent sales record.",
+        "responses": {
+          "200": {
+            "description": "Latest sales record retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sale_id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-01-01"
+                        },
+                        "card_payment_amt": {
+                          "type": "number",
+                          "example": 100.00
+                        },
+                        "cash_payment_amt": {
+                          "type": "number",
+                          "example": 50.00
+                        },
+                        "total_sales": {
+                          "type": "number",
+                          "example": 150.00
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-01-01T12:00:00Z"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-01-01T12:00:00Z"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No sales record found"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Detailed error message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/generate": {
+      "get": {
+        "summary": "Generate report",
+        "description": "Generate a sales report for a specified date range.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-01-01"
+            },
+            "description": "Start date for the report"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-01-07"
+            },
+            "description": "End date for the report. Defaults to 7 days after start date if not provided."
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["daily", "weekly", "monthly"],
+              "example": "daily"
+            },
+            "description": "Range for the report (daily, weekly, monthly). Defaults to daily if not provided."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "total_card_payment": {
+                        "type": "number",
+                        "example": 1000.00
+                      },
+                      "total_cash_payment": {
+                        "type": "number",
+                        "example": 500.00
+                      },
+                      "report_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid start_date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid start_date"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/recent": {
+      "get": {
+        "summary": "Get recent sales data",
+        "description": "Retrieve the most recent 7 days of sales data.",
+        "responses": {
+          "200": {
+            "description": "Recent sales data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "total_card_payment": {
+                        "type": "number",
+                        "example": 1000.00
+                      },
+                      "total_cash_payment": {
+                        "type": "number",
+                        "example": 500.00
+                      },
+                      "report_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/weekly-sales": {
+      "get": {
+        "summary": "Get weekly sales data",
+        "description": "Retrieve the weekly sales data.",
+        "responses": {
+          "200": {
+            "description": "Weekly sales data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "week_year": {
+                        "type": "string",
+                        "example": "2024-01"
+                      },
+                      "total_sales": {
+                        "type": "number",
+                        "example": 1000.00
+                      },
+                      "average_daily_sales": {
+                        "type": "number",
+                        "example": 500.00
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/monthly-sales": {
+      "get": {
+        "summary": "Get monthly sales data",
+        "description": "Retrieve the monthly sales data.",
+        "responses": {
+          "200": {
+            "description": "Monthly sales data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "month_year": {
+                        "type": "string",
+                        "example": "2024-01"
+                      },
+                      "total_sales": {
+                        "type": "number",
+                        "example": 1000.00
+                      },
+                      "average_daily_sales": {
+                        "type": "number",
+                        "example": 500.00
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
