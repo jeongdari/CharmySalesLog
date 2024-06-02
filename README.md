@@ -152,6 +152,71 @@ The application is built using React Native and Expo. It follows a component-bas
 - **D3 and Victory**: For data visualization and charts.
 - **Swagger**: For API documentation.
 
+### File Structure
+
+#### Backend (API)
+
+```
+charm_sales_api/
+│
+├── node_modules/
+│
+├── src/
+│   ├── config/
+│   │   ├── db.js
+│   │   ├── dummy_sales_data.sql
+│   │   └── init.sql
+│   │
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── crawler.js
+│   │   ├── profile.js
+│   │   ├── reports.js
+│   │   ├── sales.js
+│   │   └── index.js
+│   │
+│   └── licenses.json
+│
+└── .env
+```
+
+#### Frontend
+
+```
+src/
+│
+├── components/
+│   ├── BarChartComponent.jsx
+│   ├── config.jsx
+│   ├── DarkMode.jsx
+│   ├── DatePickerComponent.jsx
+│   ├── handleLogout.jsx
+│   ├── RecordSalesUtils.jsx
+│   ├── ReportsNavigator.jsx
+│   ├── SalesTable.jsx
+│   ├── SettingsContext.jsx
+│   ├── SettingsNavigator.jsx
+│   └── Toast.jsx
+│
+├── screens/
+│   ├── AboutView.jsx
+│   ├── AppSettingsScreen.jsx
+│   ├── AuthScreen.jsx
+│   ├── DailyReportScreen.jsx
+│   ├── HomeScreen.jsx
+│   ├── MonthlyReportScreen.jsx
+│   ├── ProfileSettingsScreen.jsx
+│   ├── RecordSalesScreen.jsx
+│   ├── WeeklyReportScreen.jsx
+│
+└── styles/
+    ├── AuthStyles.jsx
+    ├── HomeStyles.jsx
+    ├── RecordSalesStyles.jsx
+    ├── ReportScreen.jsx
+    └── SettingStyles.jsx
+```
+
 ## Contributing
 
 Contributions are welcome! To contribute to the development of CharmySalesLog:
