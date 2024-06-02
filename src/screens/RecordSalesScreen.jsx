@@ -33,8 +33,6 @@ export default function RecordSalesScreen() {
         setIsEditing(true);
       } else {
         setIsEditing(false);
-        setCardPayment("");
-        setCashPayment("");
       }
     } catch (error) {
       console.error("Error fetching sales record:", error);
@@ -47,7 +45,7 @@ export default function RecordSalesScreen() {
   const handleSubmit = async () => {
     try {
       console.log("Submitting sales record:", { date, cardPayment, cashPayment });
-      const success = await updateSalesRecord(date, cardPayment, cashPayment, setSubmittedData);
+      const success = await updateSalesRecord(date, cardPayment, cashPayment, setSubmittedData, setCardPayment, setCashPayment);
       if (success) {
         setCardPayment("");
         setCashPayment("");
@@ -80,6 +78,7 @@ export default function RecordSalesScreen() {
       setCardPayment("");
       setCashPayment("");
       setIsEditing(false);
+      setSubmittedData({ date: "N/A", card_payment_amt: "N/A", cash_payment_amt: "N/A" });
       showToast("success", "Success", "Sales record deleted successfully");
     } catch (error) {
       console.error("Error deleting sales record:", error);

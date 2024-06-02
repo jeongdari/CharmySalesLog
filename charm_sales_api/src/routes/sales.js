@@ -11,7 +11,7 @@ router.post('/get', async (req, res) => {
     if (results.length > 0) {
       res.status(200).send(results[0]);
     } else {
-      res.status(404).send({ message: 'No sales record found for the specified date' });
+      res.status(200).send({ message: 'No sales record found for the specified date' });
     }
   } catch (err) {
     console.error("Error fetching sales record:", err);

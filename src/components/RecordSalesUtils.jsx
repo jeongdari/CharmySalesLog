@@ -53,9 +53,7 @@ export const updateSalesRecord = async (date, cardPayment, cashPayment, setSubmi
     }
 
     // Convert date to UTC before storing in the database
-    const utcDate = new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    );
+    const utcDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
 
     const response = await fetch(`${config.API_BASE_URL}/sales/update`, {
       method: "POST",
@@ -76,9 +74,7 @@ export const updateSalesRecord = async (date, cardPayment, cashPayment, setSubmi
       if (data.date) {
         // Convert date from UTC to local timezone
         let utcDate = new Date(data.date);
-        let localDate = new Date(
-          utcDate.getTime() - utcDate.getTimezoneOffset() * 60000
-        );
+        let localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
         data.date = localDate.toISOString().split("T")[0];
       }
       setSubmittedData(data);
@@ -87,30 +83,12 @@ export const updateSalesRecord = async (date, cardPayment, cashPayment, setSubmi
       return true;
     } else {
       console.error("Failed to submit sales record", data);
-      showToast(
-        "error",
-        "Error",
-        data.message || "Failed to submit sales record"
-      );
+      showToast("error", "Error", data.message || "Failed to submit sales record");
       return false;
     }
   } catch (error) {
-    if (
-      error.message === "No token found" ||
-      error.message === "Network request failed"
-    ) {
-      showToast(
-        "error",
-        "Error",
-        "An error occurred while submitting sales record"
-      );
-    } else {
-      showToast(
-        "error",
-        "Error",
-        error.message || "An error occurred while submitting sales record"
-      );
-    }
+    console.error("Error submitting sales record:", error);
+    showToast("error", "Error", "An error occurred while submitting sales record");
     return false;
   }
 };
@@ -258,9 +236,15 @@ export const fetchSalesRecord = async (date, setCardPayment, setCashPayment) => 
 
     const data = await response.json();
     if (response.ok) {
-      setCardPayment(data.card_payment_amt.toString());
-      setCashPayment(data.cash_payment_amt.toString());
-      return data;
+      if (data.message === 'No sales record found for the specified date') {
+        setCardPayment("");
+        setCashPayment("");
+        return null;
+      } else {
+        setCardPayment(data.card_payment_amt.toString());
+        setCashPayment(data.cash_payment_amt.toString());
+        return data;
+      }
     } else {
       console.error("Failed to fetch sales record", data);
       showToast(
