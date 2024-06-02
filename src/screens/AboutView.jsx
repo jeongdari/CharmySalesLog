@@ -15,7 +15,6 @@ export default function AboutView({ onClose }) {
           throw new Error(`HTTP status ${response.status}`);
         }
         const result = await response.json();
-        console.log('Licenses fetched successfully:', result); // Debugging log
         setLicensesData(Object.entries(result).map(([name, licenseData]) => ({
           name,
           license: licenseData.licenses,

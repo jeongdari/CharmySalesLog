@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getStyles } from '../styles/RecordSalesStyles';
-import { fetchLatestSales, updateSalesRecord, deleteSalesRecord } from '../components/RecordSalesUtils';
+import { fetchLatestSales, updateSalesRecord, deleteSalesRecord, fetchSalesRecord, editSalesRecord } from '../components/RecordSalesUtils';
 import { SettingsContext } from '../components/SettingsContext';
+import { showToast } from '../components/Toast';
 
 export default function RecordSalesScreen() {
   const [date, setDate] = useState(new Date());
@@ -11,6 +12,7 @@ export default function RecordSalesScreen() {
   const [cashPayment, setCashPayment] = useState("");
   const [show, setShow] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { fontSize, isDarkMode } = useContext(SettingsContext);
 
   const styles = getStyles(isDarkMode);
@@ -19,22 +21,70 @@ export default function RecordSalesScreen() {
     fetchLatestSales(setSubmittedData);
   }, []);
 
-  const onChange = (event, selectedDate) => {
+  const onChange = async (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(false);
     setDate(currentDate);
-  };
-
-  const handleSubmit = async () => {
-    const success = await updateSalesRecord(date, cardPayment, cashPayment, setSubmittedData);
-    if (success) {
+    try {
+      console.log("Fetching sales record for date:", currentDate);
+      const record = await fetchSalesRecord(currentDate, setCardPayment, setCashPayment);
+      console.log("Fetched sales record:", record);
+      if (record) {
+        setIsEditing(true);
+      } else {
+        setIsEditing(false);
+        setCardPayment("");
+        setCashPayment("");
+      }
+    } catch (error) {
+      console.error("Error fetching sales record:", error);
+      setIsEditing(false);
       setCardPayment("");
       setCashPayment("");
     }
   };
 
-  const handleDelete = () => {
-    deleteSalesRecord(date, setSubmittedData);
+  const handleSubmit = async () => {
+    try {
+      console.log("Submitting sales record:", { date, cardPayment, cashPayment });
+      const success = await updateSalesRecord(date, cardPayment, cashPayment, setSubmittedData);
+      if (success) {
+        setCardPayment("");
+        setCashPayment("");
+        showToast("success", "Success", "Sales record submitted successfully");
+      }
+    } catch (error) {
+      console.error("Error submitting sales record:", error);
+      showToast("error", "Error", "Failed to submit sales record");
+    }
+  };
+
+  const handleEdit = async () => {
+    try {
+      console.log("Editing sales record:", { date, cardPayment, cashPayment });
+      const success = await editSalesRecord(date, cardPayment, cashPayment, setSubmittedData, setCardPayment, setCashPayment);
+      if (success) {
+        setIsEditing(false);
+        showToast("success", "Success", "Sales record updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating sales record:", error);
+      showToast("error", "Error", "Failed to update sales record");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      console.log("Deleting sales record for date:", date);
+      await deleteSalesRecord(date, setSubmittedData);
+      setCardPayment("");
+      setCashPayment("");
+      setIsEditing(false);
+      showToast("success", "Success", "Sales record deleted successfully");
+    } catch (error) {
+      console.error("Error deleting sales record:", error);
+      showToast("error", "Error", "Failed to delete sales record");
+    }
   };
 
   return (
@@ -68,13 +118,16 @@ export default function RecordSalesScreen() {
         value={cashPayment}
         onChangeText={setCashPayment}
       />
-      <Button title="Submit" onPress={handleSubmit} />
+      <Button title="Submit" onPress={handleSubmit} disabled={isEditing} />
       {submittedData && (
         <View style={styles.submittedData}>
           <Text style={[styles.text, { fontSize }]}>Updated Sales Record:</Text>
           <Text style={[styles.text, { fontSize }]}>Date: {submittedData.date || "N/A"}</Text>
           <Text style={[styles.text, { fontSize }]}>Card Payment: ${submittedData.card_payment_amt}</Text>
           <Text style={[styles.text, { fontSize }]}>Cash Payment: ${submittedData.cash_payment_amt}</Text>
+          <TouchableOpacity style={styles.editButtonWrapper} onPress={handleEdit}>
+            <Text style={styles.editButtonText}>Edit</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.deleteButtonWrapper} onPress={handleDelete}>
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>

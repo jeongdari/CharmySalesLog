@@ -22,6 +22,17 @@ export const getStyles = (isDarkMode) => StyleSheet.create({
     padding: 10,
     backgroundColor: isDarkMode ? '#444' : '#fff',
   },
+  editButtonWrapper: {
+    marginTop: 10,
+    backgroundColor: '#F39C12',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
   deleteButtonWrapper: {
     marginTop: 10,
     borderRadius: 5,
