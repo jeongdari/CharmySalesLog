@@ -423,6 +423,97 @@
         }
       }
     },
+    "/api/sales/get": {
+      "post": {
+        "summary": "Fetch a sales record",
+        "description": "Fetch a sales record by date.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-01-01"
+                  }
+                },
+                "required": [
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sales record fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sale_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "example": "2024-01-01"
+                    },
+                    "card_payment_amt": {
+                      "type": "number",
+                      "example": 100.00
+                    },
+                    "cash_payment_amt": {
+                      "type": "number",
+                      "example": 50.00
+                    },
+                    "total_sales": {
+                      "type": "number",
+                      "example": 150.00
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-01T12:00:00Z"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No sales record found for the specified date"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sales/update": {
       "post": {
         "summary": "Update a sales record",
@@ -520,6 +611,119 @@
         }
       }
     },
+    "/api/sales/edit": {
+      "put": {
+        "summary": "Edit a sales record",
+        "description": "Edit an existing sales record.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-01-01"
+                  },
+                  "card_payment_amt": {
+                    "type": "number",
+                    "example": 100.00
+                  },
+                  "cash_payment_amt": {
+                    "type": "number",
+                    "example": 50.00
+                  }
+                },
+                "required": [
+                  "date",
+                  "card_payment_amt",
+                  "cash_payment_amt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sales record edited successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sale_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "example": "2024-01-01"
+                    },
+                    "card_payment_amt": {
+                      "type": "number",
+                      "example": 100.00
+                    },
+                    "cash_payment_amt": {
+                      "type": "number",
+                      "example": 50.00
+                    },
+                    "total_sales": {
+                      "type": "number",
+                      "example": 150.00
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-01T12:00:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No sales record found to update for the specified date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "No sales record found to update for the specified date"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sales/delete": {
       "delete": {
         "summary": "Delete a sales record",
@@ -542,35 +746,35 @@
                 ]
               }
             }
-          },
-          "responses": {
-            "200": {
-              "description": "Sales record deleted successfully",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "message": {
-                        "type": "string",
-                        "example": "Sales record deleted successfully"
-                      }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sales record deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Sales record deleted successfully"
                     }
                   }
                 }
               }
-            },
-            "500": {
-              "description": "Server error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string",
-                        "example": "Detailed error message"
-                      }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
                     }
                   }
                 }
@@ -653,18 +857,18 @@
                   }
                 }
               }
-            },
-            "500": {
-              "description": "Server error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string",
-                        "example": "Detailed error message"
-                      }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
                     }
                   }
                 }
@@ -729,18 +933,18 @@
                   }
                 }
               }
-            },
-            "500": {
-              "description": "Server error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string",
-                        "example": "Detailed error message"
-                      }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Detailed error message"
                     }
                   }
                 }
