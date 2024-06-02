@@ -219,7 +219,7 @@ src/
 
 ## API Documentation
 
-For detailed API documentation, please refer to the [Swagger documentation](https://github.com/jeongdari/CharmySalesLog/swagger).
+For detailed API documentation, please refer to the [Swagger documentation](http://localhost:3000/docs/).
 
 ## Contributing
 
