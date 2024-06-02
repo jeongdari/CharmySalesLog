@@ -217,6 +217,10 @@ src/
     └── SettingStyles.jsx
 ```
 
+## API Documentation
+
+For detailed API documentation, please refer to the [Swagger documentation](https://github.com/jeongdari/CharmySalesLog/swagger).
+
 ## Contributing
 
 Contributions are welcome! To contribute to the development of CharmySalesLog:
