@@ -1,5 +1,5 @@
 
-# CharmySalesLog
+# Charmy Sales Log Application
 
 CharmySalesLog is an application designed to help the staff at Charmy Bottle Shop easily log daily sales reports and provide shop owners with detailed sales trends and amounts.
 
